@@ -26,14 +26,14 @@ replaceChar: # the function replaces all the first char in the pstring to the ne
     inc     %rax            # rax++
     inc     %r8             # moving to the next byte in the array
     cmp     %rcx,   %rax
-    jl     .L12
+    jb     .L12
     xor     %rax,   %rax    #returns the pointer to the same psrting
     leaq    (%rdi), %rax
     ret
 
-# in this function I use some of the properties of the ascii table I
+# in this function I use some of the properties of the ascii table that Adam (316044809) told me
 # Pstring* swapCase(rdi - Pstring* pstr);
-swapCase:
+swapCase: # this function swaps each letter from little to big and from big to little
     movzbq  (%rdi), %rsi    # puts length of array in rsi
     xor     %rax,   %rax    # rax = 0
     leaq    1(%rdi),%rdx    # pointer to the pstring
@@ -49,16 +49,16 @@ swapCase:
     inc     %rdx            # gets the next char in the psring
     inc     %rax
     cmp     %rsi,   %rax
-    jl     .L9
+    jb     .L9
     xor     %rax,   %rax    #returns the pointer to the same psrting
     leaq    (%rdi), %rax
     ret
 
 #Pstring* pstrijcpy(rdi - Pstring* dst, rsi - Pstring* src,rdx - char i, rcx - char j);
-pstrijcpy:
+pstrijcpy: # the function copies the sub-pstring [i,j] from the second pstring to the first
     movzbq  %dl,   %r8     # checks if i is valid
     cmpb    $0,     %r8b
-    jl      .L8
+    jb      .L8
     movzbq  (%rdi), %r8    # puts length of array in r8
     dec     %r8
     cmp     %rcx,   %r8    # check's validity of the j
@@ -76,29 +76,33 @@ pstrijcpy:
     inc     %r11
     inc     %rdx
     cmp     %rcx, %rdx          # end of for (i<=j)
-    jle      .L7
+    jbe      .L7
     movq    %rdi, %rax          #return dest pstring
     ret
 
 .L8:
-    pushq	%rbp		    #save the old frame pointer
-    movq	%rsp,	%rbp	#create the new frame pointer
+    pushq	%rbp		    # save the old frame pointer
+    movq	%rsp,	%rbp	# create the new frame pointer
+    pushq   %rdi            # save the pstring for later use
+    pushq   %rsi
 
-    movq	$str,%rdi	    #the string is the only paramter passed to the printf function.
+    movq	$str,%rdi	    # the string is the only paramter passed to the printf function.
     movq	$0,%rax
-    call	printf		    #calling to printf.
+    call	printf		    # calling to printf.
 
     #return from printf:
-    leaq	(%rsi), %rax	#return the second pstring
-    movq	%rbp, %rsp	    #restore the old stack pointer - release all used memory.
-    popq	%rbp		    #restore old frame pointer (the caller function frame)
+    popq    %rsi
+    popq    %rdi
+    movq    %rdi, %rax 	    # return the first pstring
+    movq	%rbp, %rsp	    # restore the old stack pointer - release all used memory.
+    popq	%rbp		    # restore old frame pointer (the caller function frame)
     ret
 
 #int pstrijcmp(Pstring* pstr1, Pstring* psrt2, char i, char j);
-pstrijcmp:
+pstrijcmp: # the function compares the sub-pstrings [i,j] in the 2 pstrings
     movzbq  %dl,   %r8     # checks if i is valid
     cmpb    $0,    %r8b
-    jl      .L6
+    jb      .L6
     movzbq  (%rdi), %r8    # puts length of array in r8
     dec     %r8
     cmp     %rcx,   %r8    # check's validity of the j
@@ -119,7 +123,7 @@ pstrijcmp:
     inc     %r11
     inc     %rdx
     cmp     %rcx, %rdx      # end of for (i<=j)
-    jle      .L5
+    jbe      .L5
     movq    $0, %rax        #return dest pstring
     ret
 .L4:

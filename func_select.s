@@ -5,7 +5,7 @@ frm2ints:   .string " %hhu"
 case50or60: .string "first pstring length: %d, second pstring length: %d\n"
 case52:     .string "old char: %c, new char: %c, first string: %s, second string: %s\n"
 case55:     .string "compare result: %d\n"
-case53or54:     .string "length: %d, string: %s\nlength: %d, string: %s\n  "
+case53or54: .string "length: %d, string: %s\nlength: %d, string: %s\n"
 default:    .string "invalid option!\n"
 .align      8
 	.text	# the beginnig of the code
