@@ -1,6 +1,6 @@
 # 318850575 Avital Livshitz
 	.section	.rodata	#read only data section
-str:	.string	"ivalid input!\n"
+str:	.string	"invalid input!\n"
 	.text	#the beginnig of the code
 .global pstrlen, replaceChar, swapCase, pstrijcpy, pstrijcmp
 	.type	pstrlen, @function
