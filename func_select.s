@@ -1,7 +1,7 @@
-.data
+# 318850575 Avital Livshitz
 .section	.rodata			# read only data section
 format:     .string " %c %c"
-frm2ints:   .string " %d"
+frm2ints:   .string " %hhu"
 case50or60: .string "first pstring length: %d, second pstring length: %d\n"
 case52:     .string "old char: %c, new char: %c, first string: %s, second string: %s\n"
 case55:     .string "compare result: %d\n"
@@ -10,7 +10,7 @@ default:    .string "invalid option!\n"
 .align      8
 	.text	# the beginnig of the code
 	.global func_select
-	.type	func_select, @function	# the label "main" representing the beginning of a function
+	.type	func_select, @function
     .L10:
         .quad .L4 # case 50
         .quad .L9 # case 51
@@ -24,8 +24,8 @@ default:    .string "invalid option!\n"
         .quad .L9 # case 59
         .quad .L4 # case 60
 
-    .L4:
-        call    pstrlen             # calculates the length of the first pstring wich is saved in rdi already.
+    .L4:                            # case 50 or 60
+        call    pstrlen             # calculates the length of the first pstring which is saved in rdi already.
         movzbq  %al,        %rsi    # the resault it saves in the second argument we send later to printf
         movq    -16(%rbp),  %rdi    # put the secong pstring in rdi
         call    pstrlen
@@ -33,7 +33,7 @@ default:    .string "invalid option!\n"
         mov     $case50or60,%rdi    # the line we want to print
         jmp     .L3
 
-    .L5:
+    .L5:                            # case 52
         xor     %rax,       %rax    # rax = 0 to call scanf
         movq    $format,    %rdi    # the format of the read from scanf
         push    %r12                # so we can run the register later
@@ -59,21 +59,7 @@ default:    .string "invalid option!\n"
         pop     %r12
         jmp     .L3
 
-    .L7:
-        push    %r12                # to use the register r12
-        call    swapCase            # call swapCase with the first pstring that already in the rdi
-        leaq    (%rax),     %r12    # the new pstring we put in r12
-        movq    -16(%rbp),  %rdi    # call swapCase with the secong pstring
-        call    swapCase
-        movzbq  (%rax),     %rcx    # call printf to the 2 pstrings
-        leaq    1(%rax),    %r8
-        movzbq  (%r12),     %rsi
-        leaq    1(%r12),    %rdx
-        mov     $case53or54,%rdi
-        pop     %r12                # restore the register r12
-        jmp     .L3
-
-    .L6:
+    .L6:                            # case 53
         xor     %rax,       %rax    # rax = 0 to call scanf for the first int
         movq    $frm2ints,  %rdi    # the format of the read from scanf
         sub     $16,        %rsp    # allocate space for scanf that devides in 16
@@ -96,7 +82,22 @@ default:    .string "invalid option!\n"
         movq    $case53or54,%rdi
         addq    $16,        %rsp    # delete the memory we allocated
         jmp     .L3
-    .L8:
+
+    .L7:                            # case 54
+        push    %r12                # to use the register r12
+        call    swapCase            # call swapCase with the first pstring that already in the rdi
+        leaq    (%rax),     %r12    # the new pstring we put in r12
+        movq    -16(%rbp),  %rdi    # call swapCase with the secong pstring
+        call    swapCase
+        movzbq  (%rax),     %rcx    # call printf to the 2 pstrings
+        leaq    1(%rax),    %r8
+        movzbq  (%r12),     %rsi
+        leaq    1(%r12),    %rdx
+        mov     $case53or54,%rdi
+        pop     %r12                # restore the register r12
+        jmp     .L3
+
+    .L8:                            # case 55
         xor     %rax,       %rax    # rax = 0 to call scanf for the first int
         movq    $frm2ints,  %rdi    # the format of the read from scanf
         sub     $16,        %rsp    # allocate space for scanf that devides in 16
@@ -116,11 +117,11 @@ default:    .string "invalid option!\n"
         addq    $16,        %rsp    # delete the memory we allocated
         jmp     .L3
 
-    .L9:
+    .L9:                                # default
         mov     $default, %rdi          # prepare for printf
         jmp     .L3
 
-    .L3:
+    .L3:                                # calling printf in the end of the case
         xor    %eax,    %eax            # Zeroing EAX is efficient way to clear AL.
         call   printf                   # call printf with the arfuments already set in each case
         mov    $0,      %rax            # return here from the function
@@ -129,7 +130,6 @@ default:    .string "invalid option!\n"
         popq   %rbp
         ret
 
-	########
 func_select:
 	pushq	%rbp		        # save the old frame pointer
 	movq	%rsp,       %rbp	# create the new frame pointer

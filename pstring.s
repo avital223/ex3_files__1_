@@ -1,7 +1,6 @@
-
+# 318850575 Avital Livshitz
 	.section	.rodata	#read only data section
 str:	.string	"ivalid input!\n"
-	########
 	.text	#the beginnig of the code
 .global pstrlen, replaceChar, swapCase, pstrijcpy, pstrijcmp
 	.type	pstrlen, @function
@@ -15,7 +14,7 @@ pstrlen: # the function returns the length of the pstring
     ret
 
 #Pstring* replaceChar(rdi - Pstring* pstr, rsi - char oldChar, rdx - char newChar);
-replaceChar:
+replaceChar: # the function replaces all the first char in the pstring to the new char
     movzbq  (%rdi), %rcx    # puts length of array in rcx
     xor     %rax,   %rax    # rax = 0
     leaq    1(%rdi),%r8     # puts in r8 the pointer of the array to the string
@@ -32,10 +31,10 @@ replaceChar:
     leaq    (%rdi), %rax
     ret
 
-#ASCII properties
-#Pstring* swapCase(rdi - Pstring* pstr);
+# in this function I use some of the properties of the ascii table I
+# Pstring* swapCase(rdi - Pstring* pstr);
 swapCase:
-    movzbq  (%rdi), %rsi    # puts length of array in rcx
+    movzbq  (%rdi), %rsi    # puts length of array in rsi
     xor     %rax,   %rax    # rax = 0
     leaq    1(%rdi),%rdx    # pointer to the pstring
 .L9:
