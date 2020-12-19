@@ -114,20 +114,38 @@ pstrijcmp: # the function compares the sub-pstrings [i,j] in the 2 pstrings
     leaq    1(%rdi, %rdx),%r10  # goes to i place in the first array
     leaq    1(%rsi, %rdx),%r11  # goes to i place in the second array
 .L5:
-    movzbq  (%r11), %rdi    #copies the char from the first array to the second
-    movzbq  (%r10), %rsi
-    sub     %rdi, %rsi
-    jg      .L4             # if the first if bigger then the second
-    jl      .L3             # if the second if bigger then the first
-    inc     %r10            # i++
+    movzbq  (%r11),     %rdi    # copies the char from the first array to the second
+    movzbq  (%r10),     %rsi
+    sub     $'A',       %rdi    # chack if the char in the first pstring is big letter or no.
+    cmp     $'Z'-'A',   %rdi
+    ja      .L1
+    movzbq  (%r11),     %rdi    # if it's a big letter - it converts it to small
+    add     $0x20,      %rdi
+    jmp     .L2
+.L1:
+    movzbq  (%r11),     %rdi
+.L2:
+    sub     $'A',       %rsi  # chack if the char in the first pstring is big letter or no.
+    cmp     $'Z'-'A',   %rsi
+    ja      .L13
+    movzbq  (%r10),     %rsi  # if it's a big letter - it converts it to small
+    add     $0x20,      %rsi
+    jmp     .L14
+.L13:
+    movzbq  (%r10),     %rsi
+.L14:
+    sub     %rdi,       %rsi
+    jg      .L4                     # if the first if bigger then the second
+    jl      .L3                     # if the second if bigger then the first
+    inc     %r10                    # i++
     inc     %r11
     inc     %rdx
-    cmp     %rcx, %rdx      # end of for (i<=j)
+    cmp     %rcx,       %rdx        # end of for (i<=j)
     jbe      .L5
-    movq    $0, %rax        #return dest pstring
+    movq    $0,         %rax        #return dest pstring
     ret
 .L4:
-    movq    $1, %rax        #return dest pstring
+    movq    $1,         %rax        #return dest pstring
     ret
 .L3:
     movq    $-1, %rax       #return dest pstring

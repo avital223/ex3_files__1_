@@ -20,7 +20,7 @@ run_main:
     movq    $formatstr, %rdi
     leaq    1(%rsp),    %rsi    # call scanf
     call    scanf
-    xor     %rax,       %rax    # rax = 0 to call scanf for the seond pstring length
+    xor     %rax,       %rax     # rax = 0 to call scanf for the seond pstring length
     movq    $formatint, %rdi
     leaq    257(%rsp),  %rsi    # call scanf
     call    scanf
@@ -36,7 +36,7 @@ run_main:
     leaq    257(%rsp),  %rsi
     movq    $choice,    %rcx
     movq    (%rcx),     %rdx
-    call    func_select
+    call    run_func
     add     $528,       %rsp
     popq    %rbp                # return
     ret

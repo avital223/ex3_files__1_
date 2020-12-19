@@ -9,8 +9,8 @@ case53or54: .string "length: %d, string: %s\nlength: %d, string: %s\n"
 default:    .string "invalid option!\n"
 .align      8
 	.text	# the beginnig of the code
-	.global func_select
-	.type	func_select, @function
+	.global run_func
+	.type	run_func, @function
     .L10:
         .quad .L4 # case 50
         .quad .L9 # case 51
@@ -130,7 +130,7 @@ default:    .string "invalid option!\n"
         popq   %rbp
         ret
 
-func_select:
+run_func:
 	pushq	%rbp		        # save the old frame pointer
 	movq	%rsp,       %rbp	# create the new frame pointer
 	pushq   %rdi                # save the pointers to the pstrings in the stack
